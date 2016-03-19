@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #define MAXSIZE 1024 
 #define INSERT 1
 #define MERGE 2
@@ -41,7 +42,7 @@ ElemType getInfo(void)
 LinkedList LinkedListCtreate(int n)
 {
 	int i;
-	LinkedList L,p;
+	LinkedList L,p,bak,pre;
 	L=(Lnode*)malloc(sizeof(Lnode));
 	if(L==NULL)
 	{
@@ -59,36 +60,36 @@ LinkedList LinkedListCtreate(int n)
 		}
 		p->data=getInfo();
 		p->next=L->next;
-		L->next=p;
+		L->next=p;	
 	}
 	
+	
+	bak=L->next;
+	while(bak!=NULL&&bak->next!=NULL)
+	{
+		pre=bak;
+		p=bak->next;
+		while(p!=NULL)
+		{
+			if(strcmp(bak->data.strName,p->data.strName)==0&&bak->data.age==p->data.age)
+			{
+				pre->next=p->next;
+				p->next=NULL;
+				free(p);
+			 
+			}
+		pre=p;
+		p=p->next; 
+		}
+		
+		if(bak->next==NULL)
+			exit(0);
+		bak=bak->next;
+	}
+
 	return L;
 }
 
-
-//遍历查找
-
-LinkedList LinkedListFind(ElemType in,LinkedList L)
-{
-	LinkedList p;
-	p=L->next;
-	while((p->data.strName != in.strName||p->data.age!=in.age) && p->next != NULL)
-	{
-		p=p->next;
-	}
-	if(p->next!=NULL)
-	{
-		return p;
-	}
-	else
-	{
-		puts("该学生不存在");
-		exit(0);
-	}
-} 
-
-//插入
- 
 void LinkedListInsert(LinkedList L)
 {
 	LinkedList pre=NULL, q=(Lnode *)malloc(sizeof(Lnode));
@@ -99,11 +100,11 @@ void LinkedListInsert(LinkedList L)
 		exit(0);
 	}
 	
-	printf("请输入插入位置（哪位同学之前）\n");
+	printf("请输入插入位置（哪位同学之前）\n\n");
 	
 	p=getInfo();
 	
-	printf("请输入插入信息\n");
+	printf("请输入插入信息\n\n");
 	
 	q->data=getInfo();
 	pre=L;
@@ -111,7 +112,11 @@ void LinkedListInsert(LinkedList L)
 	{
 		pre=pre->next;
 	}
-	
+	if(pre==NULL)
+	{
+		puts("该同学不存在 ");
+		exit(0);
+	}
 	q->next=pre->next;
 	pre->next=q;
 	
@@ -119,7 +124,7 @@ void LinkedListInsert(LinkedList L)
 //保序合并 
 LinkedList linkedListMerge(LinkedList La,LinkedList Lb )
 {
-	LinkedList Lc;
+	LinkedList Lc,pre,bak,p;
     Lnode *pa=La->next;
     Lnode *pb=Lb->next;
     Lc=La;
@@ -150,7 +155,46 @@ LinkedList linkedListMerge(LinkedList La,LinkedList Lb )
     {
         pc->next=pb;
     }
+    
+	bak=pc->next;
+	while(bak!=NULL&&bak->next!=NULL)
+	{
+		pre=bak;
+		p=bak->next;
+		while(p!=NULL)
+		{
+			if(strcmp(bak->data.strName,p->data.strName)==0&&bak->data.age==p->data.age)
+			{
+				pre->next=p->next;
+				p->next=NULL;
+				free(p);
+			 
+			}
+		pre=p;
+		p=p->next; 
+		}
+		
+		if(bak->next==NULL)
+			exit(0);
+		bak=bak->next;
+	}  
     return Lc;
+}
+
+void LinkedListDelete(LinkedList L)
+{
+	LinkedList pre,Ltarget;
+	puts("请输入删除个体信息");
+	ElemType target=getInfo();
+	pre=L;
+	while((pre!=NULL)&&((pre->next->data.strName!=target.strName)&&(pre->next->data.age!=target.age)))
+	{
+		pre=pre->next;
+	}
+	Ltarget=pre->next;
+	pre->next=Ltarget->next;
+	Ltarget->next=NULL;
+	free(Ltarget);
 }
 
 LinkedList ListReverse(LinkedList L)
@@ -174,34 +218,35 @@ LinkedList ListReverse(LinkedList L)
 
 int main(void)
 {	
-	int i,len,cmd;
-	LinkedList L1,L2,p,Lc;
+	int i,len,cmd,list;
+	LinkedList L1,L2,p,Lc,L;
 	int listNum=1;
 	ElemType a[MAXSIZE];
 	
 	printf("创建单链表，请输入初始化长度\t");
  	scanf("%d",&len);
- 	
- 		//用户输入学生信息 ，创建单链表 
-/*	for(i=0;i<len;i++)
-	{
-		a[i]=getInfo();	
-	}
-	*/
+
 	L1=LinkedListCtreate(len);
- 	
- 	
+	
 	for(;;)
 	{	puts("******************************************");
 		printf("0-退出\n1-插入\n2-合并\n3-删除\n4-打印链表\n5-新建链表\n键入命令以继续...\n");
 		scanf("%d",&cmd);
 		switch(cmd)
 		{
-			case  INSERT : LinkedListInsert(L1);
+			case  INSERT :  if(listNum==2)
+							{
+								puts("选择链表,输入1,2");
+								scanf("%d",&list);
+								if(list==1) L=L1;  
+								else 		L=L2;
+							}
+							else L=L1;
+							LinkedListInsert(L);
 							len++;
-							p=L1->next;
+							p=L->next;
 							printf("姓名\t年龄\n");
-							for(i=0;i<len;i++)
+							while(p!=NULL)
 							{
 								printf("%s\t%d\n",(p->data).strName,p->data.age);
 								p=p->next;
@@ -225,13 +270,39 @@ int main(void)
 							}
 							puts("******************************************");
 							continue;
-			case DELETE : 
-			case PRINT :
+			case DELETE : 	
+							if(listNum==2)
+							{
+								puts("选择链表,输入1,2");
+								scanf("%d",&list);
+								if(list==1) L=L1;  
+								else 		L=L2;
+							}
+							else
+							L=L1;
+							LinkedListDelete(L);
+							len--;
+							goto A;
+							
+		A:	case PRINT :	if(listNum==0)
+							{
+								p=Lc->next;
+								puts("L-merged");
+								printf("姓名\t年龄\n");
+								while(p!=NULL)
+								{
+									printf("%s\t%d\n",(p->data).strName,p->data.age);
+									p=p->next;
+		
+								}
+							puts("******************************************");
+							continue;
+							}
 							p=L1->next;
 							puts("******************************************");
 							puts("L1");
 							printf("姓名\t年龄\n");
-							for(i=0;i<len;i++)
+							while(p!=NULL)
 							{
 								printf("%s\t%d\n",(p->data).strName,p->data.age);
 								p=p->next;
@@ -243,26 +314,15 @@ int main(void)
 							p=L2->next;
 							puts("L2");
 							printf("姓名\t年龄\n");
-							for(i=0;i<len;i++)
+							while(p!=NULL)
 							{
 								printf("%s\t%d\n",(p->data).strName,p->data.age);
 								p=p->next;
 		
 							}
 							puts("******************************************");
-							if(listNum<3)
-								continue;
 							
-							p=Lc->next;
-							puts("L-merged");
-							printf("姓名\t年龄\n");
-							for(i=0;i<len;i++)
-							{
-								printf("%s\t%d\n",(p->data).strName,p->data.age);
-								p=p->next;
-		
-							}
-							puts("******************************************");
+
 							continue;
 			case NEW :
 							listNum++;
@@ -270,7 +330,7 @@ int main(void)
 							p=L2->next;
 							puts("******************************************");
 							printf("姓名\t年龄\n");
-							for(i=0;i<len;i++)
+							while(p!=NULL)
 							{
 								printf("%s\t%d\n",(p->data).strName,p->data.age);
 								p=p->next;
