@@ -128,7 +128,7 @@ LinkedList linkedListMerge(LinkedList La,LinkedList Lb )
 
     while(pa !=NULL && pb!=NULL)
     {
-         if(pa->data.age >= pb->data.age)
+         if(pa->data.age <= pb->data.age)
          {
              pc->next=pa;
              pc=pa;
@@ -151,6 +151,25 @@ LinkedList linkedListMerge(LinkedList La,LinkedList Lb )
         pc->next=pb;
     }
     return Lc;
+}
+
+LinkedList ListReverse(LinkedList L)
+{
+    LinkedList current, p;
+
+    if (L == NULL)
+    {
+        return NULL;
+    }
+    current = L->next;
+    while (current->next != NULL)
+    {
+        p = current->next;
+        current->next = p->next;
+        p->next = L->next;
+        L->next = p;
+    }
+    return L;
 }
 
 int main(void)
@@ -194,7 +213,8 @@ int main(void)
 							if(listNum<2)
 								continue;
 							Lc=linkedListMerge(L1,L2);
-							p=Lc->next;
+							
+							p=ListReverse(Lc )->next;
 							puts("******************************************");
 							printf("ĞÕÃû\tÄêÁä\n");
 							while(p!=NULL)
