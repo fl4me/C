@@ -82,8 +82,6 @@ LinkedList LinkedListCtreate(int n)
 		p=p->next; 
 		}
 		
-		if(bak->next==NULL)
-			exit(0);
 		bak=bak->next;
 	}
 
@@ -156,7 +154,7 @@ LinkedList linkedListMerge(LinkedList La,LinkedList Lb )
         pc->next=pb;
     }
     
-	bak=pc->next;
+	bak=Lc->next;
 	while(bak!=NULL&&bak->next!=NULL)
 	{
 		pre=bak;
@@ -173,11 +171,9 @@ LinkedList linkedListMerge(LinkedList La,LinkedList Lb )
 		pre=p;
 		p=p->next; 
 		}
-		
-		if(bak->next==NULL)
-			exit(0);
 		bak=bak->next;
-	}  
+	}
+
     return Lc;
 }
 
@@ -253,12 +249,12 @@ int main(void)
 		
 							}
 							
-							continue;
+							break;
 			case MERGE :	
 							if(listNum<2)
-								continue;
+								break;
 							Lc=linkedListMerge(L1,L2);
-							
+							listNum=0; 
 							p=ListReverse(Lc )->next;
 							puts("******************************************");
 							printf("姓名\t年龄\n");
@@ -269,7 +265,7 @@ int main(void)
 		
 							}
 							puts("******************************************");
-							continue;
+							break;
 			case DELETE : 	
 							if(listNum==2)
 							{
@@ -296,7 +292,7 @@ int main(void)
 		
 								}
 							puts("******************************************");
-							continue;
+							break;
 							}
 							p=L1->next;
 							puts("******************************************");
@@ -310,7 +306,7 @@ int main(void)
 							}
 							puts("******************************************");
 							if(listNum<2)
-								continue;
+								break;
 							p=L2->next;
 							puts("L2");
 							printf("姓名\t年龄\n");
@@ -323,7 +319,7 @@ int main(void)
 							puts("******************************************");
 							
 
-							continue;
+							break;
 			case NEW :
 							listNum++;
 							L2=LinkedListCtreate(len);
@@ -336,7 +332,7 @@ int main(void)
 								p=p->next;
 		
 							}
-							continue;
+							break;
 			default :		exit(0);
 		}
 		
